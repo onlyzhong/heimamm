@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <router-link to="">随便点击一下</router-link>
+  <div class="app">
+    <!-- <router-link to="">随便点击一下</router-link> -->
     <router-view></router-view>
   </div>
 
