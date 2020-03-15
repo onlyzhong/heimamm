@@ -1,9 +1,7 @@
 <template>
   <div>
-    <router-link to="">随便点击一下</router-link>
-    <router-view></router-view>
+    登录页面
   </div>
-
 </template>
 
 <script>
