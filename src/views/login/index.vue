@@ -2,26 +2,117 @@
   <div class="login">
     <div class="leftbox">
       <div class="title">
-        <img class="titleimg" src="../../assets/title-logo.png" alt="">
+        <img class="titleimg" src="../../assets/title-logo.png" alt />
         <span class="titlename">黑马面面</span>
         <span class="titleline"></span>
         <span class="titlelogin">用户登录</span>
       </div>
+      <!-- 使用表单元素完成结构 -->
+      <el-form :rules="rules" class="loginform" ref="form" :model="form" label-width="0px">
+        <el-form-item>
+          <el-input prefix-icon="el-icon-user" placeholder="请输入手机号" v-model="form.phone"></el-input>
+        </el-form-item>
+        <el-form-item prop="password">
+          <el-input prefix-icon="el-icon-lock" placeholder="请输入密码" v-model="form.password"></el-input>
+        </el-form-item>
+        <el-form-item prop="logincode">
+          <!-- 使用栅格系统来添加内容 -->
+          <el-row>
+            <el-col :span="16">
+              <el-input prefix-icon="el-icon-key" placeholder="请输入验证码" v-model="form.logincode"></el-input>
+            </el-col>
+            <el-col :span="8">
+              <img class="loginCode" src="../../assets/login_captcha.png" alt />
+            </el-col>
+          </el-row>
+        </el-form-item>
+        <el-form-item class="checkboxheight" prop="isCheck">
+          <el-checkbox v-model="form.isCheck">
+            我已阅读并同意
+            <el-link type="primary">用户协议</el-link>和
+            <el-link type="primary">隐私条款</el-link>
+          </el-checkbox>
+        </el-form-item>
+        <el-form-item>
+          <el-button class="loginbnt" type="primary" @click="onSubmit">登录</el-button>
+        </el-form-item>
+        <el-form-item>
+          <el-button class="loginbnt" type="primary">注册</el-button>
+        </el-form-item>
+      </el-form>
     </div>
-    <img class="rightimg" src="../../assets/login_banner_ele.png" alt="">
+    <img class="rightimg" src="../../assets/login_banner_ele.png" alt />
   </div>
 </template>
 
 <script>
 export default {
-
-}
+  data() {
+    return {
+      form: {
+        // 手机号
+        phone: "",
+        // 密码
+        password: "",
+        // 验证码
+        logincode: "",
+        // 是否阅读
+        isCheck: []
+      },
+      rules: {
+        password: [
+          // 非空：
+          { required: true, message: "密码不能为空", trigger: "blur" },
+          // 长度
+          {
+            min: 6,
+            max: 18,
+            message: "长度在 6 到 18 个字符",
+            trigger: "change"
+          }
+        ],
+        logincode: [
+          // 非空：
+          { required: true, message: "验证码不能为空", trigger: "blur" },
+          // 长度
+          { min: 4, max: 4, message: "验证的长度应该为 4", trigger: "change" }
+        ],
+        isCheck: [
+          {
+            type: "array",
+            required: true,
+            message: "请先阅读用户协议和隐私条款",
+            trigger: "change"
+          }
+        ]
+      }
+    };
+  },
+  methods: {
+    onSubmit() {
+      this.$refs.form.validate(valid => {
+        if (valid) {
+          this.$message({
+            message: "验证成功",
+            type: "success"
+          });
+        } else {
+          this.$message.error("验证失败");
+        }
+      });
+    }
+  }
+};
 </script>
 
 <style lang="less">
 .login {
   height: 100%;
-  background: linear-gradient(225deg, rgba(20, 147, 250, 1), rgba(1, 198, 250, 1));
+  background: linear-gradient(
+    225deg,
+    rgba(20, 147, 250, 1),
+    rgba(1, 198, 250, 1)
+  );
   /* 使用 flex 布局 */
   display: flex;
   /* 让两者左右间隔相等 */
@@ -63,6 +154,21 @@ export default {
         font-weight: 400;
         color: rgba(12, 12, 12, 1);
       }
+    }
+    .loginform {
+      margin-top: 29px;
+    }
+    .loginCode {
+      width: 100%;
+      height: 40px;
+    }
+    .checkboxheight {
+      .el-form-item__content {
+        line-height: 20px;
+      }
+    }
+    .loginbnt {
+      width: 100%;
     }
   }
   .rightimg {
