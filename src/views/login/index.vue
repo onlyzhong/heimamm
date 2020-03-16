@@ -18,34 +18,38 @@
         <el-form-item prop="logincode">
           <!-- 使用栅格系统来添加内容 -->
           <el-row>
-            <el-col :span="16">
+            <el-col :span="17">
               <el-input prefix-icon="el-icon-key" placeholder="请输入验证码" v-model="form.logincode"></el-input>
             </el-col>
-            <el-col :span="8">
+            <el-col :span="7">
               <img class="loginCode" src="../../assets/login_captcha.png" alt />
             </el-col>
           </el-row>
         </el-form-item>
         <el-form-item class="checkboxheight" prop="isCheck">
-          <el-checkbox v-model="form.isCheck">
-            我已阅读并同意
-            <el-link type="primary">用户协议</el-link>和
-            <el-link type="primary">隐私条款</el-link>
-          </el-checkbox>
+          <el-checkbox-group v-model="form.isCheck">
+            <el-checkbox>
+              我已阅读并同意
+              <el-link type="primary">用户协议</el-link>和
+              <el-link type="primary">隐私条款</el-link>
+            </el-checkbox>
+          </el-checkbox-group>
         </el-form-item>
         <el-form-item>
           <el-button class="loginbnt" type="primary" @click="onSubmit">登录</el-button>
         </el-form-item>
         <el-form-item>
-          <el-button class="loginbnt" type="primary">注册</el-button>
+          <el-button class="loginbnt" type="primary" @click="goRegister">注册</el-button>
         </el-form-item>
       </el-form>
     </div>
     <img class="rightimg" src="../../assets/login_banner_ele.png" alt />
+    <register ref="register"></register>
   </div>
 </template>
 
 <script>
+import register from "./components/register";
 export default {
   data() {
     return {
@@ -56,14 +60,12 @@ export default {
         password: "",
         // 验证码
         logincode: "",
-        // 是否阅读
+        // 条款
         isCheck: []
       },
       rules: {
         password: [
-          // 非空：
           { required: true, message: "密码不能为空", trigger: "blur" },
-          // 长度
           {
             min: 6,
             max: 18,
@@ -72,9 +74,7 @@ export default {
           }
         ],
         logincode: [
-          // 非空：
           { required: true, message: "验证码不能为空", trigger: "blur" },
-          // 长度
           { min: 4, max: 4, message: "验证的长度应该为 4", trigger: "change" }
         ],
         isCheck: [
@@ -86,9 +86,14 @@ export default {
           }
         ]
       }
+      // comment: register
     };
   },
+  components: {
+    register
+  },
   methods: {
+    // 登录按钮事件
     onSubmit() {
       this.$refs.form.validate(valid => {
         if (valid) {
@@ -100,6 +105,10 @@ export default {
           this.$message.error("验证失败");
         }
       });
+    },
+    //注册按钮事件
+    goRegister() {
+      this.$refs.register.dialogFormVisible = true;
     }
   }
 };
