@@ -9,7 +9,7 @@
       </div>
       <!-- 使用表单元素完成结构 -->
       <el-form :rules="rules" class="loginform" ref="form" :model="form" label-width="0px">
-        <el-form-item>
+        <el-form-item prop="phone">
           <el-input prefix-icon="el-icon-user" placeholder="请输入手机号" v-model="form.phone"></el-input>
         </el-form-item>
         <el-form-item prop="password">
@@ -22,7 +22,7 @@
               <el-input prefix-icon="el-icon-key" placeholder="请输入验证码" v-model="form.logincode"></el-input>
             </el-col>
             <el-col :span="7">
-              <img class="loginCode" src="../../assets/login_captcha.png" alt />
+              <img @click="changeImg" class="loginCode" :src="imgCodeUrl" alt />
             </el-col>
           </el-row>
         </el-form-item>
@@ -50,9 +50,15 @@
 
 <script>
 import register from "./components/register";
+
+// 导入自定义校验规则
+import { checkPhone } from "@/utils/mycheck.js";
 export default {
   data() {
     return {
+      // 登录验证码路径
+      imgCodeUrl:
+        process.env.VUE_APP_HTTP + `/captcha?type=login&t=` + Date.now(),
       form: {
         // 手机号
         phone: "",
@@ -64,6 +70,7 @@ export default {
         isCheck: []
       },
       rules: {
+        phone: [{ required: true, validator: checkPhone, trigger: "blur" }],
         password: [
           { required: true, message: "密码不能为空", trigger: "blur" },
           {
@@ -93,6 +100,11 @@ export default {
     register
   },
   methods: {
+    //点击图片切换验证码
+    changeImg() {
+      this.imgCodeUrl =
+        process.env.VUE_APP_HTTP + `/captcha?type=login&t=` + Date.now();
+    },
     // 登录按钮事件
     onSubmit() {
       this.$refs.form.validate(valid => {

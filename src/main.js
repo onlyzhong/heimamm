@@ -15,6 +15,9 @@ import "./style/index.css"
 Vue.use(ElementUI);
 Vue.config.productionTip = false
 
+window.console.log(process.env.VUE_APP_NAME);
+window.console.log(process.env.VUE_APP_AGE);
+
 new Vue({
   router,
   render: h => h(App),
