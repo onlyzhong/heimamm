@@ -4,7 +4,10 @@
       <!-- 头部 -->
       <el-header>
         <div class="left">
-          <i class="el-icon-s-fold"></i>
+          <i
+            @click="iscollapse=!iscollapse"
+            :class="{'el-icon-s-fold':iscollapse,'el-icon-s-unfold':!iscollapse }"
+          ></i>
           <img src="../../assets/index_logo.png" alt />
           <span>黑马面面</span>
         </div>
@@ -16,9 +19,39 @@
       </el-header>
       <el-container class="contentbox">
         <!-- 菜单导航栏 -->
-        <el-aside width="200px">Aside</el-aside>
+        <!-- <el-aside> -->
+        <el-menu
+          default-active="/index/chart"
+          :router="true"
+          class="el-menu-vertical-demo"
+          :collapse="iscollapse"
+        >
+          <el-menu-item index="/index/chart">
+            <i class="el-icon-pie-chart"></i>
+            <span slot="title">数据概览</span>
+          </el-menu-item>
+          <el-menu-item index="/index/user">
+            <i class="el-icon-user"></i>
+            <span slot="title">用户列表</span>
+          </el-menu-item>
+          <el-menu-item index="/index/question">
+            <i class="el-icon-edit-outline"></i>
+            <span slot="title">题库列表</span>
+          </el-menu-item>
+          <el-menu-item index="/index/enterprise">
+            <i class="el-icon-office-building"></i>
+            <span slot="title">企业列表</span>
+          </el-menu-item>
+          <el-menu-item index="/index/subject">
+            <i class="el-icon-notebook-2"></i>
+            <span slot="title">学科列表</span>
+          </el-menu-item>
+        </el-menu>
+        <!-- </el-aside> -->
         <!-- 内容区域 -->
-        <el-main>Main</el-main>
+        <el-main>
+          <router-view></router-view>
+        </el-main>
       </el-container>
     </el-container>
   </div>
@@ -26,14 +59,17 @@
 
 <script>
 // 导入方法
-import { apiInfo } from "@/api/index.js";
+import { apiInfo, apiLogout } from "@/api/index.js";
 // 导入操作 token 的方法
 import { removeToken } from "@/utils/mytoken.js";
+
+//
 export default {
   data() {
     return {
       imgUrl: "",
-      userInfo: {}
+      userInfo: {},
+      iscollapse: false
     };
   },
   methods: {
@@ -44,14 +80,18 @@ export default {
         type: "warning"
       })
         .then(() => {
-          //清除token
-          removeToken();
-          //跳转到login页面
-          this.$router.push("/login");
-          //提示退出成功
-          this.$message({
-            type: "success",
-            message: "退出成功!"
+          apiLogout().then(res => {
+            if (res.data.code == 200) {
+              //清除token
+              removeToken();
+              //跳转到login页面
+              this.$router.push("/login");
+              //提示退出成功
+              this.$message({
+                type: "success",
+                message: "退出成功!"
+              });
+            }
           });
         })
         .catch(() => {
@@ -123,10 +163,15 @@ export default {
 .el-aside {
   background-color: #fff;
   color: #333;
+  width: 0;
 }
 
 .el-main {
   background-color: #e8e9ec;
   color: #333;
+}
+.el-menu-vertical-demo:not(.el-menu--collapse) {
+  width: 200px;
+  min-height: 400px;
 }
 </style>

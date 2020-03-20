@@ -20,3 +20,12 @@ export function apiInfo() {
         }
     })
 }
+// 封装一个退出登录的方法
+export function apiLogout() {
+    return instance({
+        url: '/logout',
+        headers: {
+            token: getToken()
+        }
+    })
+}

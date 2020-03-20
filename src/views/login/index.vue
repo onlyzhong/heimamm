@@ -83,12 +83,12 @@ export default {
             min: 6,
             max: 18,
             message: "长度在 6 到 18 个字符",
-            trigger: "change"
+            trigger: "blur"
           }
         ],
         logincode: [
           { required: true, message: "验证码不能为空", trigger: "blur" },
-          { min: 4, max: 4, message: "验证的长度应该为 4", trigger: "change" }
+          { min: 4, max: 4, message: "验证的长度应该为 4", trigger: "blur" }
         ],
         isCheck: [
           {
