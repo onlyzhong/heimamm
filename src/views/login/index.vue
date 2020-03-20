@@ -53,6 +53,12 @@ import register from "./components/register";
 
 // 导入自定义校验规则
 import { checkPhone } from "@/utils/mycheck.js";
+
+//导入操作登陆的方法
+import { apiLogin } from "@/api/login.js";
+
+//导入操作登录
+import { setToken } from "@/utils/mytoken.js";
 export default {
   data() {
     return {
@@ -109,9 +115,18 @@ export default {
     onSubmit() {
       this.$refs.form.validate(valid => {
         if (valid) {
-          this.$message({
-            message: "验证成功",
-            type: "success"
+          // this.$message({
+          //   message: "验证成功",
+          //   type: "success"
+          // });
+          apiLogin({
+            phone: this.form.phone,
+            password: this.form.password,
+            code: this.form.logincode
+          }).then(res => {
+            setToken(res.data.data.token);
+            window.console.log(res);
+            this.$router.push("/index");
           });
         } else {
           this.$message.error("验证失败");

@@ -4,7 +4,8 @@
 import axios from "axios"
 // 创建一个新的 axios 对象，并且设置基准地址
 var instance = axios.create({
-    baseURL: process.env.VUE_APP_URL
+    baseURL: process.env.VUE_APP_HTTP,
+    withCredentials: true
 });
 
 // axios.create: 单独创建一个新的 axios 实例
