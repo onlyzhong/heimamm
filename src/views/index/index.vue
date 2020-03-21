@@ -13,7 +13,7 @@
         </div>
         <div class="right">
           <img :src="imgUrl" alt />
-          <span class="word">{{ userInfo.username }}</span>
+          <span class="word">{{ $store.state.name }}{{changeName()}}</span>
           <el-button @click="logout" type="primary" size="mini">退出</el-button>
         </div>
       </el-header>
@@ -50,6 +50,7 @@
         <!-- </el-aside> -->
         <!-- 内容区域 -->
         <el-main>
+          <!-- <div>{{ $store.state.name }}</div> -->
           <router-view></router-view>
         </el-main>
       </el-container>
@@ -59,10 +60,12 @@
 
 <script>
 // 导入方法
+// import { apiLogout } from "@/api/index.js";
 import { apiInfo, apiLogout } from "@/api/index.js";
 // 导入操作 token 的方法
-import { removeToken } from "@/utils/mytoken.js";
 
+// import { removeToken } from "@/utils/mytoken.js";
+import { removeToken, getToken } from "@/utils/mytoken.js";
 //
 export default {
   data() {
@@ -73,6 +76,12 @@ export default {
     };
   },
   methods: {
+
+    //接收数据改变store中的值
+    changeName() {
+      this.$store.commit("changeName", this.userInfo.username);
+    },
+    //退出按钮
     logout() {
       this.$confirm("是否确定退出?", "提示", {
         confirmButtonText: "确定",
@@ -103,11 +112,22 @@ export default {
     }
   },
   created() {
+    //判断是否存在token
+    if (!getToken()) {
+      this.$message.error("请先登录");
+      this.$router.push("/");
+      return;
+    }
     //获取用户信息
     apiInfo().then(res => {
       window.console.log(res);
-      this.userInfo = res.data.data;
-      this.imgUrl = process.env.VUE_APP_HTTP + "/" + this.userInfo.avatar;
+      if (res.data.code == 200) {
+        this.userInfo = res.data.data;
+        this.imgUrl = process.env.VUE_APP_HTTP + "/" + this.userInfo.avatar;
+      } else if (res.data.code == 206) {
+        this.$message.error("token错误,请先登录");
+        this.$router.push("/");
+      }
     });
   }
 };
