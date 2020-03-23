@@ -21,6 +21,9 @@ import NPprogress from 'nprogress';
 //导入样式
 import "nprogress/nprogress.css";
 
+//导入store
+import store from "../store/index"
+
 //导入message
 import {
     Message
@@ -42,16 +45,16 @@ const router = new VueRouter({
         {
             path: "/login",
             component: Login,
-            meta:{
-                title:"登录"
+            meta: {
+                title: "登录"
             }
         },
         //主页
         {
             path: "/index",
             component: Index,
-            meta:{
-                title:"后台管理"
+            meta: {
+                title: "后台管理"
             },
             children: [{
                     path: "chart",
@@ -121,6 +124,10 @@ router.beforeEach((to, from, next) => {
         } else {
             apiInfo().then(res => {
                 if (res.data.code == 200) {
+                    var userInfo = {};
+                    userInfo.username = res.data.data.username;
+                    userInfo.avatar = process.env.VUE_APP_HTTP + "/" + res.data.data.avatar;
+                    store.commit("setUserInfo", userInfo)
                     next();
                 } else if (res.data.code == 206) {
                     Message.error("请先登录");

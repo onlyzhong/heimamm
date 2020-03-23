@@ -12,8 +12,8 @@
           <span>黑马面面</span>
         </div>
         <div class="right">
-          <img :src="imgUrl" alt />
-          <span class="word">{{ $store.state.name }}{{changeName()}}</span>
+          <img :src="$store.state.avatar" alt />
+          <span class="word">{{ $store.state.name }}</span>
           <el-button @click="logout" type="primary" size="mini">退出</el-button>
         </div>
       </el-header>
@@ -60,8 +60,8 @@
 
 <script>
 // 导入方法
-// import { apiLogout } from "@/api/index.js";
-import { apiInfo, apiLogout } from "@/api/index.js";
+import { apiLogout } from "@/api/index.js";
+// import { apiInfo, apiLogout } from "@/api/index.js";
 // 导入操作 token 的方法
 
 // import { removeToken } from "@/utils/mytoken.js";
@@ -76,12 +76,11 @@ export default {
     };
   },
   methods: {
-
-    //接收数据改变store中的值
-    changeName() {
-      this.$store.commit("changeName", this.userInfo.username);
+    // 接收数据改变store中的值
+    changeInfo() {
+      this.$store.commit("changeInfo", this.userInfo);
     },
-    //退出按钮
+    // 退出按钮
     logout() {
       this.$confirm("是否确定退出?", "提示", {
         confirmButtonText: "确定",
@@ -119,16 +118,17 @@ export default {
       return;
     }
     //获取用户信息
-    apiInfo().then(res => {
-      window.console.log(res);
-      if (res.data.code == 200) {
-        this.userInfo = res.data.data;
-        this.imgUrl = process.env.VUE_APP_HTTP + "/" + this.userInfo.avatar;
-      } else if (res.data.code == 206) {
-        this.$message.error("token错误,请先登录");
-        this.$router.push("/");
-      }
-    });
+    // apiInfo().then(res => {
+    //   window.console.log(res);
+    //   if (res.data.code == 200) {
+    //     this.userInfo = res.data.data;
+    //     this.userInfo.avatar = process.env.VUE_APP_HTTP + "/" + this.userInfo.avatar;
+    //     this.changeInfo();
+    //   } else if (res.data.code == 206) {
+    //     this.$message.error("token错误,请先登录");
+    //     this.$router.push("/");
+    //   }
+    // });
   }
 };
 </script>
