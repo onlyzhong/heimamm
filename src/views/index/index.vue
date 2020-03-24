@@ -21,7 +21,7 @@
         <!-- 菜单导航栏 -->
         <!-- <el-aside> -->
         <el-menu
-          default-active="/index/chart"
+          :default-active="defaultRouter"
           :router="true"
           class="el-menu-vertical-demo"
           :collapse="iscollapse"
@@ -72,7 +72,8 @@ export default {
     return {
       imgUrl: "",
       userInfo: {},
-      iscollapse: false
+      iscollapse: false,
+      defaultRouter: ""
     };
   },
   methods: {
@@ -111,6 +112,8 @@ export default {
     }
   },
   created() {
+    window.console.log(this.$router.currentRoute.path);
+    this.defaultRouter = this.$router.currentRoute.path;
     //判断是否存在token
     if (!getToken()) {
       this.$message.error("请先登录");

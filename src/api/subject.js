@@ -11,6 +11,27 @@ const instance = axios.create({
     withCredentials: true
 })
 
+//请求拦截器
+instance.interceptors.request.use(
+    function (config) {
+        config.headers.token = getToken();
+        return config;
+    },
+    function (error) {
+        return Promise.reject(error);
+    }
+);
+
+//响应拦截器
+instance.interceptors.response.use(
+    function (response) {
+        return response;
+    },
+    function (error) {
+        return Promise.reject(error);
+    }
+)
+
 // 封装请求学科的接口
 export function apiGetSubject(subjectList) {
     let {
@@ -23,9 +44,9 @@ export function apiGetSubject(subjectList) {
     } = subjectList
     return instance({
         url: '/subject/list',
-        headers: {
-            token: getToken()
-        },
+        // headers: {
+        //     token: getToken()
+        // },
         params: {
             name,
             page,
@@ -35,4 +56,76 @@ export function apiGetSubject(subjectList) {
             status
         }
     })
+}
+
+// 封装状态切换的接口
+export function apiChangeStatus(id) {
+    return instance({
+        url: "/subject/status",
+        method: "POST",
+        data: {
+            id
+        }
+    });
+}
+
+//封装新增学科的接口
+export function apiAddSubject(addForm) {
+    let {
+        rid,
+        name,
+        short_name,
+        intro,
+        remark
+    } = addForm;
+    return instance({
+        url: "/subject/add",
+        method: "POST",
+        data: {
+            rid,
+            name,
+            short_name,
+            intro,
+            remark
+        }
+    })
+
+}
+
+// 封装一个提交数据的方法
+export function apiEidtSubject(editForm) {
+    let {
+        rid, // 学科编号
+        name, // 学科名称
+        short_name, // 简称
+        intro, // 介绍
+        remark, // 备注
+        id //要修改数据的 id
+    } = editForm;
+    return instance({
+        url: "/subject/edit",
+        method: "POST",
+        data: {
+            rid, // 学科编号
+            name, // 学科名称
+            short_name, // 简称
+            intro, // 介绍
+            remark, // 备注
+            id //要修改数据的 id
+        }
+    });
+}
+
+//封装一个删除学科的接口
+export function apiDeleteSubject(deleteForm) {
+    let {
+        id //要修改数据的 id
+    } = deleteForm;
+    return instance({
+        url: "/subject/remove",
+        method: "POST",
+        data: {
+            id //要修改数据的 id
+        }
+    });
 }
