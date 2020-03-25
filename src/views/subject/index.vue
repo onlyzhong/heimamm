@@ -13,7 +13,7 @@
           <el-input class="short" v-model="navObj.username"></el-input>
         </el-form-item>
         <el-form-item label="状态">
-          <el-select class="long" v-model="navObj.region">
+          <el-select class="long" v-model="navObj.status">
             <el-option label="所有" value></el-option>
             <el-option label="禁用" :value="0"></el-option>
             <el-option label="启用" :value="1"></el-option>
@@ -40,14 +40,16 @@
         <el-table-column prop="name" label="学科名称"></el-table-column>
         <el-table-column prop="short_name" label="简称"></el-table-column>
         <el-table-column prop="username" label="创造者"></el-table-column>
-        <el-table-column prop="create_time" label="创建日期" width="180"></el-table-column>
+        <el-table-column prop="create_time" label="创建日期">
+          <template slot-scope="scope">{{scope.row.create_time |setTime}}</template>
+        </el-table-column>
         <el-table-column label="状态">
-          <template slot-scope="scope">{{scope.row.status?"禁用":"启用"}}</template>
+          <template slot-scope="scope">{{scope.row.status?"启用":"禁用"}}</template>
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
             <el-link type="primary" @click="edit(scope.row)">编辑</el-link>&nbsp;
-            <el-link type="primary" @click="disAble(scope.row)">{{scope.row.status?"启用":"禁用"}}</el-link>&nbsp;
+            <el-link type="primary" @click="disAble(scope.row)">{{scope.row.status?"禁用":"启用"}}</el-link>&nbsp;
             <el-link type="primary" @click="deleteSubject(scope.row)">删除</el-link>
           </template>
         </el-table-column>
@@ -105,7 +107,7 @@ export default {
         rid: "",
         name: "",
         username: "",
-        region: ""
+        status: ""
       }
     };
   },
@@ -144,7 +146,7 @@ export default {
       let id = row.id;
       apiChangeStatus(id).then(() => {
         this.getSubjectData();
-        if (row.status) {
+        if (!row.status) {
           this.$message.success("启用成功");
         } else {
           this.$message.success("禁用成功");
@@ -163,7 +165,7 @@ export default {
       this.obj.rid = this.navObj.rid;
       this.obj.name = this.navObj.name;
       this.obj.username = this.navObj.username;
-      this.obj.region = this.navObj.region;
+      this.obj.status = this.navObj.status;
       this.getSubjectData();
     },
 
@@ -172,7 +174,7 @@ export default {
       this.navObj.rid = "";
       this.navObj.name = "";
       this.navObj.username = "";
-      this.navObj.region = "";
+      this.navObj.status = "";
     },
 
     //编辑按钮
@@ -188,7 +190,9 @@ export default {
       // // 重新赋值
       // this.$refs.editDailog.form = objStr
       // 简写
-      this.$refs.editSubject.form = JSON.parse(JSON.stringify(row));
+      if (row.id !== this.$refs.editSubject.form.id) {
+        this.$refs.editSubject.form = JSON.parse(JSON.stringify(row));
+      }
     },
 
     //删除按钮
@@ -202,7 +206,13 @@ export default {
           console.log(res);
           console.log(row);
           apiDeleteSubject(row).then(res => {
-            console.log(res);
+            if (res.data.code == 200) {
+              if (this.subjectList.length == 1) {
+                this.obj.page = this.obj.page - 1;
+              }
+              this.$message.success("删除成功");
+            }
+            // console.log(res);
             this.getSubjectData();
           });
         })

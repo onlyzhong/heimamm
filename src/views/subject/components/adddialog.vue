@@ -63,6 +63,8 @@ export default {
               this.$refs.form.resetFields();
               //重新加载数据
               this.$parent.getSubjectData();
+            } else {
+              this.$message.error(res.data.message);
             }
           });
         } else {

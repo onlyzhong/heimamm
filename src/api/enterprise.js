@@ -1,11 +1,11 @@
-// // 用来封装所有与学科相关的网站请求
-// // 导入 axios
+// 用来封装所有与企业相关的网站请求
+// 导入 axios
 // import axios from 'axios'
-// // 导入接口 token 的方法
+// 导入接口 token 的方法
 // import {
 //     getToken
 // } from '../utils/mytoken'
-// // 创建一个 axios 实例
+// 创建一个 axios 实例
 // const instance = axios.create({
 //     baseURL: process.env.VUE_APP_HTTP,
 //     withCredentials: true
@@ -32,18 +32,18 @@ import instance from '../utils/myhttp'
 //     }
 // )
 
-// 封装请求学科的接口
-export function apiGetSubject(subjectList) {
+// 封装请求企业的接口
+export function apiGetenterprise(enterpriseList) {
     let {
         name,
         page,
         limit,
-        rid,
+        eid,
         username,
         status
-    } = subjectList
+    } = enterpriseList
     return instance({
-        url: '/subject/list',
+        url: '/enterprise/list',
         // headers: {
         //     token: getToken()
         // },
@@ -51,7 +51,7 @@ export function apiGetSubject(subjectList) {
             name,
             page,
             limit,
-            rid,
+            eid,
             username,
             status
         }
@@ -61,7 +61,7 @@ export function apiGetSubject(subjectList) {
 // 封装状态切换的接口
 export function apiChangeStatus(id) {
     return instance({
-        url: "/subject/status",
+        url: "/enterprise/status",
         method: "POST",
         data: {
             id
@@ -69,20 +69,20 @@ export function apiChangeStatus(id) {
     });
 }
 
-//封装新增学科的接口
-export function apiAddSubject(addForm) {
+//封装新增企业的接口
+export function apiAddenterprise(addForm) {
     let {
-        rid,
+        eid,
         name,
         short_name,
         intro,
         remark
     } = addForm;
     return instance({
-        url: "/subject/add",
+        url: "/enterprise/add",
         method: "POST",
         data: {
-            rid,
+            eid,
             name,
             short_name,
             intro,
@@ -92,37 +92,38 @@ export function apiAddSubject(addForm) {
 
 }
 
-// 封装一个提交数据的方法
-export function apiEidtSubject(editForm) {
+// 封装一个编辑数据的方法
+export function apiEidtenterprise(editForm) {
     let {
-        rid, // 学科编号
-        name, // 学科名称
+        id, //要修改数据的 id
+
+        eid,
+        name, // 企业名称
         short_name, // 简称
         intro, // 介绍
         remark, // 备注
-        id //要修改数据的 id
     } = editForm;
     return instance({
-        url: "/subject/edit",
+        url: "/enterprise/edit",
         method: "POST",
         data: {
-            rid, // 学科编号
-            name, // 学科名称
+            id, //要修改数据的 id
+            tag: eid,
+            name, // 企业名称
             short_name, // 简称
             intro, // 介绍
-            remark, // 备注
-            id //要修改数据的 id
+            remark // 备注
         }
     });
 }
 
-//封装一个删除学科的接口
-export function apiDeleteSubject(deleteForm) {
+//封装一个删除企业的接口
+export function apiDeleteenterprise(deleteForm) {
     let {
         id //要修改数据的 id
     } = deleteForm;
     return instance({
-        url: "/subject/remove",
+        url: "/enterprise/remove",
         method: "POST",
         data: {
             id //要修改数据的 id

@@ -8,7 +8,8 @@ import 'element-ui/lib/theme-chalk/index.css';
 
 //导入store
 import store from "./store/index"
-
+//导入时间过滤器
+import "./filters/timeFilter"
 
 //导入css
 import "./style/index.css"
