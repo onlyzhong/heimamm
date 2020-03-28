@@ -8,16 +8,11 @@ import Index from "../views/index/index.vue"
 // import UseElement from '../views/useElement/index.vue'
 
 
-
-// 导入 index 组件的子路由
-import Chart from '../views/chart/index.vue'
-import User from '../views/user/index.vue'
-import Question from '../views/question/index.vue'
-import Enterprise from '../views/enterprise/index.vue'
-import Subject from '../views/subject/index.vue'
+// 导入 child
+import child from "./childRouter.js";
 
 //导入nprogress
-import NPprogress from 'nprogress';
+import Nprogress from 'nprogress';
 //导入样式
 import "nprogress/nprogress.css";
 
@@ -49,101 +44,96 @@ const router = new VueRouter({
                 title: "登录"
             }
         },
-        //主页
+        // 设置首页路由
         {
             path: "/index",
             component: Index,
             meta: {
-                title: "后台管理"
+                title: "后台管理",
+                roles: ["管理员", "老师", "学生", "超级管理员"]
             },
-            children: [{
-                    path: "chart",
-                    component: Chart,
-                    meta: {
-                        title: "数据概览"
-                    }
-                },
-                {
-                    path: "user",
-                    component: User,
-                    meta: {
-                        title: "用户列表"
-                    }
-                },
-                {
-                    path: "question",
-                    component: Question,
-                    meta: {
-                        title: "题库列表"
-                    }
-                },
-                {
-                    path: "enterprise",
-                    component: Enterprise,
-                    meta: {
-                        title: "企业列表"
-                    }
-                },
-                {
-                    path: "subject",
-                    component: Subject,
-                    meta: {
-                        title: "学科列表"
-                    }
-                },
-                // 子组件路由重定向
-                {
-                    path: "*",
-                    redirect: "chart"
-                },
-                // 进主页直接进入chart组件
-                {
-                    path: "",
-                    redirect: "chart"
-                },
-            ]
+            children: child
         },
         //路由重定向
         {
             path: "/*",
             redirect: "/login"
-        },
-
+        }
     ]
 })
-
+// 添加一个全局前置导航守卫：当路由发生改变之前会执行
+// to：要跳转的目标路由
+// from：当前跳转来源的路由
+// next：是否继续执行后续的代码
 router.beforeEach((to, from, next) => {
+
     document.title = to.meta.title
-    NPprogress.start();
+    Nprogress.start();
+    //判断是否为登录界面
+    console.log(to.path);
+
     if (to.path != "/login") {
         console.log(getToken());
+        //判断是否存在token
         if (!getToken()) {
-            Message.error("请先登录");
-            NPprogress.done();
+            //不存在则提示并跳转登录页面
+            Message.error("请先登录,token错误");
+            Nprogress.done();
             next("/login");
         } else {
+            //存在则判断是否为真
             apiInfo().then(res => {
-                if (res.data.code == 200) {
-                    var userInfo = {};
-                    userInfo.username = res.data.data.username;
-                    userInfo.avatar = process.env.VUE_APP_HTTP + "/" + res.data.data.avatar;
-                    store.commit("setUserInfo", userInfo)
-                    next();
-                } else if (res.data.code == 206) {
-                    Message.error("请先登录");
-                    NPprogress.done();
-                    next("/login")
+                //判断当前账户是否为禁用状态
+                if (res.data.data.status == 0) {
+                    Message.error("该账号已被禁用,请联系管理员");
+                    Nprogress.done();
+                    next("/login");
+                } else {
+                    console.log(res.data.code);
+
+                    if (res.data.code == 200) {
+                        // 创建一个用户信息对象
+                        var userInfo = {};
+                        // 设置用户名
+                        userInfo.username = res.data.data.username;
+                        // 设置用户头像
+                        userInfo.avatar = process.env.VUE_APP_HTTP + "/" + res.data.data.avatar;
+                        // 调用 mutations 中的方法
+                        store.commit("setUserInfo", userInfo)
+                        // 得到当前登录系统的用户角色
+                        const role = res.data.data.role;
+                        // console.log(role);
+
+                        // 将用户角色保存到 vuex 中
+                        store.commit("setRole", role);
+                        // 判断当前访问的路由权限中是否保存 role
+                        // console.log(to.meta.roles)
+                        if (to.meta.roles.includes(role)) {
+                            // 说明当前角色有访问本路由的权限
+                            next();
+                        } else {
+                            // 说明当前角色没有访问本路由的权限
+                            Message.error("对不起，您没有访问本路由的权限");
+                            // 关闭进度条
+                            Nprogress.done();
+                        }
+                    } else if (res.data.code == 206) {
+                        Message.error("请先登录..............");
+                        Nprogress.done();
+                        next("/login")
+                    }
                 }
+
             })
         }
     } else {
-        // NPprogress.done();
+        // Nprogress.done();
         next();
     }
 })
 
 router.afterEach(() => {
-    NPprogress.done();
+    Nprogress.done();
 })
 // 输出 出去router
 export default router

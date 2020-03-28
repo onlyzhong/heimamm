@@ -26,7 +26,17 @@
           class="el-menu-vertical-demo"
           :collapse="iscollapse"
         >
-          <el-menu-item index="/index/chart">
+          <template v-for="(item, index) in child">
+            <el-menu-item
+              :key="index"
+              v-if="item.meta.roles.includes($store.state.role)"
+              :index="item.meta.fullpath"
+            >
+              <i class="el-icon-pie-chart"></i>
+              <span slot="title">{{ item.meta.title }}</span>
+            </el-menu-item>
+          </template>
+          <!-- <el-menu-item index="/index/chart">
             <i class="el-icon-pie-chart"></i>
             <span slot="title">数据概览</span>
           </el-menu-item>
@@ -45,7 +55,7 @@
           <el-menu-item index="/index/subject">
             <i class="el-icon-notebook-2"></i>
             <span slot="title">学科列表</span>
-          </el-menu-item>
+          </el-menu-item>-->
         </el-menu>
         <!-- </el-aside> -->
         <!-- 内容区域 -->
@@ -62,8 +72,11 @@
 // 导入方法
 import { apiLogout } from "@/api/index.js";
 // import { apiInfo, apiLogout } from "@/api/index.js";
-// 导入操作 token 的方法
 
+// 导入子路由
+import child from "@/router/childRouter.js";
+
+// 导入操作 token 的方法
 // import { removeToken } from "@/utils/mytoken.js";
 import { removeToken, getToken } from "@/utils/mytoken.js";
 //
@@ -73,7 +86,9 @@ export default {
       imgUrl: "",
       userInfo: {},
       iscollapse: false,
-      defaultRouter: ""
+      defaultRouter: "",
+      // 生成导航的数据源
+      child: child
     };
   },
   methods: {

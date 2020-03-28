@@ -11,7 +11,8 @@ const store = new Vuex.Store({
     // 用来管理数据
     state: {
         name: '日川冈坂',
-        avatar: ''
+        avatar: '',
+        role: '' // 用户角色
     },
     // 用来修改 state 的方法
     mutations: {
@@ -19,6 +20,12 @@ const store = new Vuex.Store({
         setUserInfo: function (state, pyload) {
             state.name = pyload.username
             state.avatar = pyload.avatar
+        },
+        // 定义一个设置用户角色的方法
+        setRole: function (state, payload) {
+            // console.log(payload);
+            
+            state.role = payload
         }
     }
 })

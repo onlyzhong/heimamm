@@ -12,9 +12,9 @@
         <el-form-item label="角色">
           <el-select class="long" v-model="navObj.role_id">
             <el-option label="所有" value></el-option>
-            <el-option label="管理员" :value="1"></el-option>
+            <el-option label="管理员" :value="2"></el-option>
             <el-option label="老师" :value="3"></el-option>
-            <el-option label="学生" :value="2"></el-option>
+            <el-option label="学生" :value="4"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item>
@@ -41,7 +41,7 @@
         <el-table-column prop="role_id" label="角色">
           <template
             slot-scope="scope"
-          >{{scope.row.role_id==3?"老师":(scope.row.role_id==2?"学生":"管理员")}}</template>
+          >{{scope.row.role_id==3?"老师":(scope.row.role_id==4?"学生":"管理员")}}</template>
         </el-table-column>
         <el-table-column prop="remark" label="备注"></el-table-column>
         <el-table-column label="状态">
